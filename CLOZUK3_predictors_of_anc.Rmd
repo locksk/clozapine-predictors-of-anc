@@ -133,8 +133,6 @@ CLOZUK3.fbc <- CLOZUK3.fbc %>% mutate(CLOZUK3.fbc,
 # take a look at the data
 CLOZUK3.fbc %>% group_by(SEX) %>% summarise("Sample Size"=n_distinct(LUIN))
 
-CLOZUK3.fbc <- subset(CLOZUK3.fbc, LUIN !='30276595' ) # ID present in CLOZUK2
-
 # calculate age at assay
 CLOZUK3.fbc$age_at_assay <- CLOZUK3.fbc$sampleyear - CLOZUK3.fbc$YOB
 
@@ -182,8 +180,6 @@ setwd(dir = "D:/siobh/Documents/Uni/PhD/Y1/Clozapine Project/Git/clozapine-proje
 load("PK/CLOZUK3_PKdata_clean_03.11.2022.Rdata")
 
 CLOZUK3.PK <- CLOZUK3_cleanup
-
-CLOZUK3.PK <- subset(CLOZUK3.PK, LUIN !='30276595' ) # ID present in CLOZUK2 so removed. 
 
 CLOZUK3.PK <- CLOZUK3.PK %>% mutate(CLOZUK3.PK, # reformat dates
                                       sampledate=ymd(sampledate),
@@ -277,8 +273,6 @@ names(dn)[names(dn) == 'FID'] <- 'LUIN'
 
 CLOZUK3.gen <- left_join(snps, dn, by = "LUIN")
 
-CLOZUK3.gen <- subset(CLOZUK3.gen, LUIN !='30276595' )
-
 CLOZUK3.gen <- dplyr::select(CLOZUK3.gen, c('LUIN', 'rs2472297_T', 'rs61750900_T', 'rs2011425_G', 'rs1126545_T', "rs2814778_C",'duffynull'))
 
 # remove temporary variables
@@ -371,8 +365,7 @@ CLOZUK3.int <- inner_join(CLOZUK3.nona, CLOZUK3.PK, by = c("LUIN" = "LUIN", "sam
 # filter by criteria
 CLOZUK3.fbc.pk <- CLOZUK3.int %>%  filter(neut_num >= 2 & neut_num <= 7.5) %>% # neutrophils within 'healthy' range
   filter(bad_metabolic_ratio != 1) %>% # metabolic ratio between 0.5 and 3 (so does not suggest non-adherance)
-  filter(low_daily_clozapine_dose != 1) %>% # daily clozapine dose above 100 mg (so not suggesting titration)
-  subset(LUIN !='30276595' ) # ensure CLOZUK2 participant not included
+  filter(low_daily_clozapine_dose != 1) # daily clozapine dose above 100 mg (so not suggesting titration)
 
 # save(CLOZUK3.fbc.pk, file = "CLOZUK3.fbc.pk.RData") # save created dataframe
 
@@ -383,9 +376,7 @@ CLOZUK3.prs.1a2 <- left_join(CLOZUK3.prs, CLOZUK3.1a2, by = "LUIN")
 CLOZUK3.prs.1a2.gen <- inner_join(CLOZUK3.prs.1a2, CLOZUK3.gen, by = "LUIN")
 
 # all w/ gen
-CLOZUK3.fbc.pk.gen <- inner_join(CLOZUK3.fbc.pk, CLOZUK3.prs.1a2.gen, by = "LUIN") %>%
-  subset(LUIN !='30276595' )
-
+CLOZUK3.fbc.pk.gen <- inner_join(CLOZUK3.fbc.pk, CLOZUK3.prs.1a2.gen, by = "LUIN")
 
 # save(CLOZUK3.fbc.pk.gen, file = "CLOZUK3.fbc.pk.gen.RData") # save created dataframe
 
